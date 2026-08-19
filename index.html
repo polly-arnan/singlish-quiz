@@ -155,16 +155,16 @@
 <script>
   var QUESTIONS = [
     { text: "Walao ______, why you liddat?", answer: "eh", citation: "Maven Potter, via r/singapore: \"Singlish test, 100% is the passing mark\" (https://www.reddit.com/r/singapore/comments/3ggkmw/singlish_test_100_is_the_passing_mark/)" },
-    { text: "Don't so bad ______, he already said sorry.", answer: "lah", citation: "Maven Potter, via r/singapore: \"Singlish test, 100% is the passing mark\" (https://www.reddit.com/r/singapore/comments/3ggkmw/singlish_test_100_is_the_passing_mark/)" },
+    { text: "Don't so bad ______, he already said sorry.", answer: "lah", altAnswers: ["leh"], citation: "Maven Potter, via r/singapore: \"Singlish test, 100% is the passing mark\" (https://www.reddit.com/r/singapore/comments/3ggkmw/singlish_test_100_is_the_passing_mark/)" },
     { text: "Orh ______, you forgot to do your homework.", answer: "hor", citation: "Maven Potter, via r/singapore: \"Singlish test, 100% is the passing mark\" (https://www.reddit.com/r/singapore/comments/3ggkmw/singlish_test_100_is_the_passing_mark/)" },
     { text: "Wait ______, I go toilet first.", answer: "ah", citation: "Maven Potter, via r/singapore: \"Singlish test, 100% is the passing mark\" (https://www.reddit.com/r/singapore/comments/3ggkmw/singlish_test_100_is_the_passing_mark/)" },
     { text: "Really ______? Did he really say that?", answer: "meh", citation: "Maven Potter, via r/singapore: \"Singlish test, 100% is the passing mark\" (https://www.reddit.com/r/singapore/comments/3ggkmw/singlish_test_100_is_the_passing_mark/)" },
-    { text: "He's a pro ______, don't play play.", answer: "hor", citation: "Maven Potter, via r/singapore: \"Singlish test, 100% is the passing mark\" (https://www.reddit.com/r/singapore/comments/3ggkmw/singlish_test_100_is_the_passing_mark/)" },
-    { text: "Huh, no more coffee? Then give me tea ______.", answer: "lah", citation: "Maven Potter, via r/singapore: \"Singlish test, 100% is the passing mark\" (https://www.reddit.com/r/singapore/comments/3ggkmw/singlish_test_100_is_the_passing_mark/)" },
+    { text: "He's a pro ______, don't play play.", answer: "hor", altAnswers: ["leh"], citation: "Maven Potter, via r/singapore: \"Singlish test, 100% is the passing mark\" (https://www.reddit.com/r/singapore/comments/3ggkmw/singlish_test_100_is_the_passing_mark/)" },
+    { text: "Huh, no more coffee? Then give me tea ______.", answer: "lah", altAnswers: ["lor"], citation: "Maven Potter, via r/singapore: \"Singlish test, 100% is the passing mark\" (https://www.reddit.com/r/singapore/comments/3ggkmw/singlish_test_100_is_the_passing_mark/)" },
     { text: "Wah you very free ______?", answer: "ah", citation: "Leimgruber, Lim, Gonzales, & Hiramoto (2021), example (2), English Language & Linguistics 25(3), p. 606. https://doi.org/10.1017/S1360674320000453" },
     { text: "I find the black emojis damn funny ______.", answer: "lor", citation: "Leimgruber, Lim, Gonzales, & Hiramoto (2021), example (5), English Language & Linguistics 25(3), p. 606. https://doi.org/10.1017/S1360674320000453" },
     { text: "Sit where? Still drizzling ______.", answer: "sia", citation: "Leimgruber, Lim, Gonzales, & Hiramoto (2021), example (6), English Language & Linguistics 25(3), p. 606. https://doi.org/10.1017/S1360674320000453" },
-    { text: "Wtf they damn mean ______?", answer: "sia", citation: "Leimgruber, Lim, Gonzales, & Hiramoto (2021), example (8), English Language & Linguistics 25(3), p. 613. https://doi.org/10.1017/S1360674320000453" },
+    { text: "Wtf they damn mean ______", answer: "sia", citation: "Leimgruber, Lim, Gonzales, & Hiramoto (2021), example (8), English Language & Linguistics 25(3), p. 613. https://doi.org/10.1017/S1360674320000453" },
     { text: "I forgot to charge my phone. Bring cable ______?", answer: "leh", citation: "Gonzales, Hiramoto, Leimgruber, & Lim (2023). The Corpus of Singapore English Messages (CoSEM). World Englishes, 42(2), 371–388. https://doi.org/10.1111/weng.12534" },
     { text: "You think it's easy to find a job nowadays ______?", answer: "meh", citation: "Chimbridge Singlish Dictionary. \"meh.\" https://singlishdict.app/?stype=sg&q=meh" }
   ];
@@ -268,6 +268,11 @@
     var guess = input.value.replace(/^\s+|\s+$/g, '').toLowerCase();
     var correctAnswer = q.answer.toLowerCase();
     var isCorrect = guess === correctAnswer || (correctAnswer === 'lah' && guess === 'la');
+    if (!isCorrect && q.altAnswers) {
+      for (var ai = 0; ai < q.altAnswers.length; ai++) {
+        if (guess === q.altAnswers[ai].toLowerCase()) { isCorrect = true; break; }
+      }
+    }
 
     if (isCorrect) {
       correctCount++;
