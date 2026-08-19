@@ -108,17 +108,6 @@
   .feedback.correct { color: #2f9e5f; }
   .feedback.incorrect { color: #d64545; }
   .hidden { display: none; }
-  .citation {
-    max-width: 480px;
-    width: 100%;
-    text-align: center;
-    font-size: 0.78rem;
-    color: #888;
-    margin-top: 10px;
-    line-height: 1.5;
-    box-sizing: border-box;
-  }
-  .citation a { color: #888; }
 </style>
 </head>
 <body>
@@ -163,13 +152,6 @@
 
 <button class="export-link" id="export-btn">Export answer sheet</button>
 
-<p class="citation" id="citation">
-  Particle examples adapted from: Leimgruber, J. R. E., Lim, J. J., Gonzales, W. D. W., &amp; Hiramoto, M. (2021).
-  Ethnic and gender variation in the use of Colloquial Singapore English discourse particles.
-  <i>English Language &amp; Linguistics</i>, 25(3), 601&ndash;620.
-  <a href="https://doi.org/10.1017/S1360674320000453">https://doi.org/10.1017/S1360674320000453</a>
-</p>
-
 <script>
   var QUESTIONS = [
     { text: "Walao ______, why you liddat?", answer: "eh", citation: "Maven Potter, via r/singapore: \"Singlish test, 100% is the passing mark\" (https://www.reddit.com/r/singapore/comments/3ggkmw/singlish_test_100_is_the_passing_mark/)" },
@@ -201,7 +183,6 @@
   var scoreTracker = document.getElementById('score-tracker');
   var exportBtn = document.getElementById('export-btn');
   var headerBlock = document.getElementById('header-block');
-  var citation = document.getElementById('citation');
   var promptEl = document.getElementById('prompt');
   var feedbackEl = document.getElementById('feedback');
   var form = document.getElementById('answer-form');
@@ -245,7 +226,6 @@
     resultScreen.classList.add('hidden');
     quizScreen.classList.remove('hidden');
     headerBlock.classList.add('hidden');
-    citation.classList.add('hidden');
     exportBtn.classList.add('hidden');
 
     if (timedMode) {
@@ -321,7 +301,6 @@
     quizScreen.classList.add('hidden');
     resultScreen.classList.remove('hidden');
     headerBlock.classList.remove('hidden');
-    citation.classList.remove('hidden');
     exportBtn.classList.remove('hidden');
     if (timedMode) {
       resultText.innerHTML = "Time's up! " + correctCount + ' correct, ' + incorrectCount + ' incorrect (' + (correctCount + incorrectCount) + ' answered).';
