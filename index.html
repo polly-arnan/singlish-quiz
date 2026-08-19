@@ -4,39 +4,136 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Singlish Particle Quiz</title>
+<style>
+  body {
+    font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
+    background: #f7f5f2;
+    color: #222;
+    margin: 0;
+    padding: 60px 20px;
+    display: flex;
+    justify-content: center;
+  }
+  .container {
+    max-width: 480px;
+    width: 100%;
+    text-align: center;
+  }
+  h1 {
+    font-size: 1.6rem;
+    margin-bottom: 4px;
+  }
+  .sub {
+    color: #666;
+    margin-top: 0;
+  }
+  .word-bank {
+    font-size: 0.9rem;
+    color: #555;
+    margin: 16px 0;
+  }
+  label.timer-option {
+    display: inline-block;
+    margin: 12px 0 20px;
+    font-size: 0.95rem;
+  }
+  input[type="text"] {
+    padding: 8px 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 160px;
+  }
+  input[type="submit"], button {
+    padding: 8px 18px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 4px;
+    background: #e8562f;
+    color: #fff;
+    cursor: pointer;
+    margin-left: 8px;
+  }
+  .progress-outer {
+    width: 100%;
+    height: 10px;
+    background: #e3ded4;
+    border-radius: 6px;
+    overflow: hidden;
+    margin: 18px 0 10px;
+  }
+  .progress-inner {
+    height: 100%;
+    width: 0%;
+    background: #e8562f;
+  }
+  .score {
+    font-size: 0.9rem;
+    color: #555;
+    margin-bottom: 6px;
+  }
+  .prompt {
+    font-size: 1.25rem;
+    margin: 22px 0;
+    min-height: 2.4em;
+  }
+  .feedback {
+    min-height: 1.4em;
+    font-weight: bold;
+    margin-top: 14px;
+  }
+  .feedback.correct { color: #2f9e5f; }
+  .feedback.incorrect { color: #d64545; }
+  .hidden { display: none; }
+  .citation {
+    font-size: 0.78rem;
+    color: #888;
+    margin-top: 50px;
+    line-height: 1.5;
+  }
+  .citation a { color: #888; }
+</style>
 </head>
 <body>
+<div class="container">
 
-<h1>Fill in the Particle</h1>
-<p>Complete each sentence with the right Singlish discourse particle.</p>
-<p>Word bank: lah, leh, lor, ah, eh, hor, mah, meh, sia</p>
-<hr>
+  <h1>Fill in the Particle</h1>
+  <p class="sub">Complete each sentence with the right Singlish discourse particle.</p>
 
-<div id="quiz-screen">
-  <p id="progress"></p>
-  <p id="prompt"></p>
-  <form id="answer-form">
-    <input type="text" id="answer-input" autocomplete="off" size="20">
-    <input type="submit" value="Check">
-  </form>
-  <p id="feedback"></p>
+  <div id="start-screen">
+    <p class="word-bank">Word bank: lah, leh, lor, ah, eh, hor, mah, meh, sia</p>
+    <label class="timer-option">
+      <input type="checkbox" id="timer-toggle"> Enable 20-second timer challenge
+    </label>
+    <br>
+    <button id="start-btn">Start</button>
+  </div>
+
+  <div id="quiz-screen" class="hidden">
+    <div class="progress-outer"><div class="progress-inner" id="progress-bar"></div></div>
+    <p class="score" id="score-tracker"></p>
+    <p class="prompt" id="prompt"></p>
+    <form id="answer-form">
+      <input type="text" id="answer-input" autocomplete="off">
+      <input type="submit" value="Check">
+    </form>
+    <p class="feedback" id="feedback"></p>
+  </div>
+
+  <div id="result-screen" class="hidden">
+    <h2>Done!</h2>
+    <p id="result-text"></p>
+    <button id="restart-btn">Try Again</button>
+  </div>
+
+  <p class="citation">
+    Particle examples adapted from: Leimgruber, J. R. E., Lim, J. J., Gonzales, W. D. W., &amp; Hiramoto, M. (2021).
+    Ethnic and gender variation in the use of Colloquial Singapore English discourse particles.
+    <i>English Language &amp; Linguistics</i>, 25(3), 601&ndash;620.
+    <a href="https://doi.org/10.1017/S1360674320000453">https://doi.org/10.1017/S1360674320000453</a>
+  </p>
+
 </div>
-
-<div id="result-screen" style="display:none">
-  <h2>Done!</h2>
-  <p>Your score: <span id="score"></span></p>
-  <form id="restart-form">
-    <input type="submit" value="Try Again">
-  </form>
-</div>
-
-<hr>
-<p><small>
-Particle examples adapted from: Leimgruber, J. R. E., Lim, J. J., Gonzales, W. D. W., &amp; Hiramoto, M. (2021).
-Ethnic and gender variation in the use of Colloquial Singapore English discourse particles.
-<i>English Language &amp; Linguistics</i>, 25(3), 601&ndash;620.
-<a href="https://doi.org/10.1017/S1360674320000453">https://doi.org/10.1017/S1360674320000453</a>
-</small></p>
 
 <script>
   var QUESTIONS = [
@@ -58,86 +155,145 @@ Ethnic and gender variation in the use of Colloquial Singapore English discourse
     { text: "I forgot to charge my phone. Bring cable ______?", answer: "leh" }
   ];
 
-  var order = [];
-  var current = 0;
-  var score = 0;
+  var TIMER_SECONDS = 20;
+  var FEEDBACK_MS = 1000;
 
+  var startScreen = document.getElementById('start-screen');
   var quizScreen = document.getElementById('quiz-screen');
   var resultScreen = document.getElementById('result-screen');
+  var timerToggle = document.getElementById('timer-toggle');
+  var startBtn = document.getElementById('start-btn');
+  var restartBtn = document.getElementById('restart-btn');
+  var progressBar = document.getElementById('progress-bar');
+  var scoreTracker = document.getElementById('score-tracker');
   var promptEl = document.getElementById('prompt');
-  var progressEl = document.getElementById('progress');
   var feedbackEl = document.getElementById('feedback');
   var form = document.getElementById('answer-form');
   var input = document.getElementById('answer-input');
-  var scoreEl = document.getElementById('score');
-  var restartForm = document.getElementById('restart-form');
+  var resultText = document.getElementById('result-text');
+
+  var timedMode = false;
+  var queue = [];
+  var queuePos = 0;
+  var correctCount = 0;
+  var incorrectCount = 0;
+  var countdownInterval = null;
+  var timeLeft = TIMER_SECONDS;
 
   function shuffledIndices(n) {
     var arr = [];
     for (var i = 0; i < n; i++) arr.push(i);
     for (var i = arr.length - 1; i > 0; i--) {
       var j = Math.floor(Math.random() * (i + 1));
-      var tmp = arr[i];
-      arr[i] = arr[j];
-      arr[j] = tmp;
+      var tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
     }
     return arr;
   }
 
-  function startQuiz() {
-    order = shuffledIndices(QUESTIONS.length);
-    current = 0;
-    score = 0;
-    resultScreen.style.display = 'none';
-    quizScreen.style.display = 'block';
-    showQuestion();
+  function refillQueue() {
+    queue = queue.concat(shuffledIndices(QUESTIONS.length));
   }
+
+  function updateScoreTracker() {
+    scoreTracker.innerHTML = 'Score: ' + correctCount + ' correct, ' + incorrectCount + ' incorrect';
+  }
+
+  startBtn.onclick = function() {
+    timedMode = timerToggle.checked;
+    correctCount = 0;
+    incorrectCount = 0;
+    queue = shuffledIndices(QUESTIONS.length);
+    queuePos = 0;
+
+    startScreen.classList.add('hidden');
+    resultScreen.classList.add('hidden');
+    quizScreen.classList.remove('hidden');
+
+    if (timedMode) {
+      timeLeft = TIMER_SECONDS;
+      progressBar.style.width = '100%';
+      countdownInterval = setInterval(function() {
+        timeLeft -= 0.1;
+        if (timeLeft <= 0) {
+          progressBar.style.width = '0%';
+          clearInterval(countdownInterval);
+          endQuiz();
+        } else {
+          progressBar.style.width = (timeLeft / TIMER_SECONDS * 100) + '%';
+        }
+      }, 100);
+    } else {
+      progressBar.style.width = '0%';
+    }
+
+    updateScoreTracker();
+    showQuestion();
+  };
 
   function showQuestion() {
+    if (queuePos >= queue.length) refillQueue();
     feedbackEl.innerHTML = '';
+    feedbackEl.className = 'feedback';
     input.value = '';
     input.disabled = false;
-    var q = QUESTIONS[order[current]];
-    progressEl.innerHTML = 'Question ' + (current + 1) + ' of ' + QUESTIONS.length;
+    var q = QUESTIONS[queue[queuePos]];
     promptEl.innerHTML = '<b>' + q.text + '</b>';
+    if (!timedMode) {
+      progressBar.style.width = (queuePos / QUESTIONS.length * 100) + '%';
+    }
     input.focus();
-  }
-
-  function showResult() {
-    quizScreen.style.display = 'none';
-    resultScreen.style.display = 'block';
-    scoreEl.innerHTML = score + ' / ' + QUESTIONS.length;
   }
 
   form.onsubmit = function(e) {
     e.preventDefault();
     if (input.disabled) return;
-    var q = QUESTIONS[order[current]];
+    var q = QUESTIONS[queue[queuePos]];
     var guess = input.value.replace(/^\s+|\s+$/g, '').toLowerCase();
-    if (guess === q.answer.toLowerCase()) {
-      score++;
+    var isCorrect = guess === q.answer.toLowerCase();
+
+    if (isCorrect) {
+      correctCount++;
       feedbackEl.innerHTML = 'Correct!';
+      feedbackEl.className = 'feedback correct';
     } else {
-      feedbackEl.innerHTML = 'Nope, it is "' + q.answer + '".';
+      incorrectCount++;
+      feedbackEl.innerHTML = 'Incorrect - ' + q.answer;
+      feedbackEl.className = 'feedback incorrect';
     }
+    updateScoreTracker();
     input.disabled = true;
+
     setTimeout(function() {
-      current++;
-      if (current < QUESTIONS.length) {
-        showQuestion();
+      queuePos++;
+      if (!timedMode && queuePos >= QUESTIONS.length) {
+        progressBar.style.width = '100%';
+        endQuiz();
+      } else if (timedMode && timeLeft <= 0) {
+        endQuiz();
       } else {
-        showResult();
+        showQuestion();
       }
-    }, 1000);
+    }, FEEDBACK_MS);
   };
 
-  restartForm.onsubmit = function(e) {
-    e.preventDefault();
-    startQuiz();
-  };
+  function endQuiz() {
+    if (countdownInterval) {
+      clearInterval(countdownInterval);
+      countdownInterval = null;
+    }
+    quizScreen.classList.add('hidden');
+    resultScreen.classList.remove('hidden');
+    if (timedMode) {
+      resultText.innerHTML = "Time's up! " + correctCount + ' correct, ' + incorrectCount + ' incorrect (' + (correctCount + incorrectCount) + ' answered).';
+    } else {
+      resultText.innerHTML = correctCount + ' out of ' + QUESTIONS.length + ' correct.';
+    }
+  }
 
-  startQuiz();
+  restartBtn.onclick = function() {
+    resultScreen.classList.add('hidden');
+    startScreen.classList.remove('hidden');
+  };
 </script>
-
 </body>
 </html>
