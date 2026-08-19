@@ -37,15 +37,24 @@
     color: #666;
     margin-top: 0;
   }
+  .start-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin: 16px 0;
+    text-align: left;
+  }
   .word-bank {
     font-size: 0.9rem;
     color: #555;
-    margin: 16px 0;
+    margin: 0;
   }
   label.timer-option {
     display: inline-block;
-    margin: 12px 0 20px;
+    flex-shrink: 0;
     font-size: 0.95rem;
+    white-space: nowrap;
   }
   input[type="text"] {
     padding: 8px 10px;
@@ -131,10 +140,12 @@
   </div>
 
   <div id="start-screen">
-    <p class="word-bank">Word bank: lah, leh, lor, ah, eh, hor, mah, meh, sia</p>
-    <label class="timer-option">
-      <input type="checkbox" id="timer-toggle"> timer
-    </label>
+    <div class="start-row">
+      <p class="word-bank">Word bank: lah, leh, lor, ah, eh, hor, mah, meh, sia</p>
+      <label class="timer-option">
+        <input type="checkbox" id="timer-toggle"> timer
+      </label>
+    </div>
     <br>
     <button id="start-btn">Start</button>
   </div>
