@@ -12,6 +12,8 @@
     margin: 0;
     padding: 60px 20px;
     display: flex;
+    flex-direction: column;
+    align-items: center;
     justify-content: center;
   }
   .container {
@@ -49,7 +51,7 @@
     font-size: 1rem;
     border: none;
     border-radius: 4px;
-    background: #e8562f;
+    background: #ef3340;
     color: #fff;
     cursor: pointer;
     margin-left: 8px;
@@ -65,12 +67,19 @@
   .progress-inner {
     height: 100%;
     width: 0%;
-    background: #e8562f;
+    background: #ef3340;
   }
   .score {
     font-size: 0.9rem;
     color: #555;
     margin-bottom: 6px;
+    text-align: right;
+  }
+  .export-row {
+    margin-top: 24px;
+  }
+  .export-row button {
+    background: #888;
   }
   .prompt {
     font-size: 1.25rem;
@@ -86,10 +95,14 @@
   .feedback.incorrect { color: #d64545; }
   .hidden { display: none; }
   .citation {
+    max-width: 480px;
+    width: 100%;
+    text-align: center;
     font-size: 0.78rem;
     color: #888;
     margin-top: 50px;
     line-height: 1.5;
+    box-sizing: border-box;
   }
   .citation a { color: #888; }
 </style>
@@ -97,8 +110,10 @@
 <body>
 <div class="container">
 
-  <h1>Fill in the Particle</h1>
-  <p class="sub">Complete each sentence with the right Singlish discourse particle.</p>
+  <div id="header-block">
+    <h1>Fill in the Particle</h1>
+    <p class="sub">Complete each sentence with the right Singlish discourse particle.</p>
+  </div>
 
   <div id="start-screen">
     <p class="word-bank">Word bank: lah, leh, lor, ah, eh, hor, mah, meh, sia</p>
@@ -110,8 +125,8 @@
   </div>
 
   <div id="quiz-screen" class="hidden">
-    <div class="progress-outer"><div class="progress-inner" id="progress-bar"></div></div>
     <p class="score" id="score-tracker"></p>
+    <div class="progress-outer hidden" id="progress-outer"><div class="progress-inner" id="progress-bar"></div></div>
     <p class="prompt" id="prompt"></p>
     <form id="answer-form">
       <input type="text" id="answer-input" autocomplete="off">
@@ -126,14 +141,18 @@
     <button id="restart-btn">Try Again</button>
   </div>
 
-  <p class="citation">
-    Particle examples adapted from: Leimgruber, J. R. E., Lim, J. J., Gonzales, W. D. W., &amp; Hiramoto, M. (2021).
-    Ethnic and gender variation in the use of Colloquial Singapore English discourse particles.
-    <i>English Language &amp; Linguistics</i>, 25(3), 601&ndash;620.
-    <a href="https://doi.org/10.1017/S1360674320000453">https://doi.org/10.1017/S1360674320000453</a>
-  </p>
+  <div class="export-row">
+    <button id="export-btn">Export answer sheet</button>
+  </div>
 
 </div>
+
+<p class="citation" id="citation">
+  Particle examples adapted from: Leimgruber, J. R. E., Lim, J. J., Gonzales, W. D. W., &amp; Hiramoto, M. (2021).
+  Ethnic and gender variation in the use of Colloquial Singapore English discourse particles.
+  <i>English Language &amp; Linguistics</i>, 25(3), 601&ndash;620.
+  <a href="https://doi.org/10.1017/S1360674320000453">https://doi.org/10.1017/S1360674320000453</a>
+</p>
 
 <script>
   var QUESTIONS = [
@@ -165,7 +184,11 @@
   var startBtn = document.getElementById('start-btn');
   var restartBtn = document.getElementById('restart-btn');
   var progressBar = document.getElementById('progress-bar');
+  var progressOuter = document.getElementById('progress-outer');
   var scoreTracker = document.getElementById('score-tracker');
+  var exportBtn = document.getElementById('export-btn');
+  var headerBlock = document.getElementById('header-block');
+  var citation = document.getElementById('citation');
   var promptEl = document.getElementById('prompt');
   var feedbackEl = document.getElementById('feedback');
   var form = document.getElementById('answer-form');
@@ -195,7 +218,7 @@
   }
 
   function updateScoreTracker() {
-    scoreTracker.innerHTML = 'Score: ' + correctCount + ' correct, ' + incorrectCount + ' incorrect';
+    scoreTracker.innerHTML = correctCount + '/' + (correctCount + incorrectCount);
   }
 
   startBtn.onclick = function() {
@@ -208,8 +231,11 @@
     startScreen.classList.add('hidden');
     resultScreen.classList.add('hidden');
     quizScreen.classList.remove('hidden');
+    headerBlock.classList.add('hidden');
+    citation.classList.add('hidden');
 
     if (timedMode) {
+      progressOuter.classList.remove('hidden');
       timeLeft = TIMER_SECONDS;
       progressBar.style.width = '100%';
       countdownInterval = setInterval(function() {
@@ -223,7 +249,7 @@
         }
       }, 100);
     } else {
-      progressBar.style.width = '0%';
+      progressOuter.classList.add('hidden');
     }
 
     updateScoreTracker();
@@ -238,9 +264,6 @@
     input.disabled = false;
     var q = QUESTIONS[queue[queuePos]];
     promptEl.innerHTML = '<b>' + q.text + '</b>';
-    if (!timedMode) {
-      progressBar.style.width = (queuePos / QUESTIONS.length * 100) + '%';
-    }
     input.focus();
   }
 
@@ -266,7 +289,6 @@
     setTimeout(function() {
       queuePos++;
       if (!timedMode && queuePos >= QUESTIONS.length) {
-        progressBar.style.width = '100%';
         endQuiz();
       } else if (timedMode && timeLeft <= 0) {
         endQuiz();
@@ -283,6 +305,8 @@
     }
     quizScreen.classList.add('hidden');
     resultScreen.classList.remove('hidden');
+    headerBlock.classList.remove('hidden');
+    citation.classList.remove('hidden');
     if (timedMode) {
       resultText.innerHTML = "Time's up! " + correctCount + ' correct, ' + incorrectCount + ' incorrect (' + (correctCount + incorrectCount) + ' answered).';
     } else {
@@ -293,6 +317,29 @@
   restartBtn.onclick = function() {
     resultScreen.classList.add('hidden');
     startScreen.classList.remove('hidden');
+  };
+
+  function csvField(value) {
+    return '"' + String(value).replace(/"/g, '""') + '"';
+  }
+
+  exportBtn.onclick = function() {
+    var rows = [['Question', 'Answer']];
+    for (var i = 0; i < QUESTIONS.length; i++) {
+      rows.push([QUESTIONS[i].text, QUESTIONS[i].answer]);
+    }
+    var csv = rows.map(function(row) {
+      return row.map(csvField).join(',');
+    }).join('\n');
+    var blob = new Blob([csv], { type: 'text/csv' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'singlish-quiz-answer-sheet.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   };
 </script>
 </body>
