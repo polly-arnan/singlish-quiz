@@ -326,7 +326,11 @@
   exportBtn.onclick = function() {
     var rows = [['Question', 'Answer', 'Citation']];
     for (var i = 0; i < QUESTIONS.length; i++) {
-      rows.push([QUESTIONS[i].text, QUESTIONS[i].answer, QUESTIONS[i].citation]);
+      var answerText = QUESTIONS[i].answer;
+      if (QUESTIONS[i].altAnswers && QUESTIONS[i].altAnswers.length) {
+        answerText += ' / ' + QUESTIONS[i].altAnswers.join(' / ');
+      }
+      rows.push([QUESTIONS[i].text, answerText, QUESTIONS[i].citation]);
     }
     var csv = rows.map(function(row) {
       return row.map(csvField).join(',');
