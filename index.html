@@ -286,7 +286,8 @@
     if (input.disabled) return;
     var q = QUESTIONS[queue[queuePos]];
     var guess = input.value.replace(/^\s+|\s+$/g, '').toLowerCase();
-    var isCorrect = guess === q.answer.toLowerCase();
+    var correctAnswer = q.answer.toLowerCase();
+    var isCorrect = guess === correctAnswer || (correctAnswer === 'lah' && guess === 'la');
 
     if (isCorrect) {
       correctCount++;
