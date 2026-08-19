@@ -4,175 +4,42 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Singlish Particle Quiz</title>
-<style>
-  :root {
-    --bg: #fdfaf3;
-    --card: #ffffff;
-    --ink: #2b2320;
-    --muted: #8a7d6f;
-    --accent: #e8562f;
-    --accent-ink: #ffffff;
-    --correct: #2f9e5f;
-    --wrong: #d64545;
-    --border: #eee0cf;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #1c1815;
-      --card: #262019;
-      --ink: #f3ece1;
-      --muted: #a99c8c;
-      --accent: #ef7a4e;
-      --accent-ink: #1c1815;
-      --correct: #58c987;
-      --wrong: #ff7a7a;
-      --border: #3a3128;
-    }
-  }
-  * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--bg);
-    color: var(--ink);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-    padding: 24px;
-  }
-  .card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 36px 32px;
-    max-width: 480px;
-    width: 100%;
-    box-shadow: 0 20px 50px -25px rgba(0,0,0,0.25);
-  }
-  h1 {
-    font-size: 1.4rem;
-    margin: 0 0 4px;
-  }
-  .sub {
-    color: var(--muted);
-    font-size: 0.9rem;
-    margin: 0 0 28px;
-  }
-  .progress {
-    font-size: 0.8rem;
-    color: var(--muted);
-    margin-bottom: 8px;
-  }
-  .prompt {
-    font-size: 1.15rem;
-    line-height: 1.6;
-    margin-bottom: 24px;
-    min-height: 3.4em;
-  }
-  .blank {
-    display: inline-block;
-    border-bottom: 2px solid var(--accent);
-    min-width: 60px;
-    padding: 0 4px;
-    font-weight: 600;
-    color: var(--accent);
-  }
-  form { display: flex; gap: 10px; }
-  input[type="text"] {
-    flex: 1;
-    font-size: 1rem;
-    padding: 12px 14px;
-    border-radius: 12px;
-    border: 1px solid var(--border);
-    background: transparent;
-    color: var(--ink);
-    outline: none;
-  }
-  input[type="text"]:focus {
-    border-color: var(--accent);
-  }
-  button {
-    font-size: 1rem;
-    font-weight: 600;
-    padding: 12px 20px;
-    border-radius: 12px;
-    border: none;
-    background: var(--accent);
-    color: var(--accent-ink);
-    cursor: pointer;
-  }
-  button:active { transform: translateY(1px); }
-  button.ghost {
-    background: transparent;
-    color: var(--ink);
-    border: 1px solid var(--border);
-  }
-  .feedback {
-    margin-top: 16px;
-    font-weight: 600;
-    min-height: 1.4em;
-  }
-  .feedback.correct { color: var(--correct); }
-  .feedback.wrong { color: var(--wrong); }
-  .word-bank {
-    margin-top: 24px;
-    font-size: 0.8rem;
-    color: var(--muted);
-  }
-  .word-bank span {
-    display: inline-block;
-    border: 1px solid var(--border);
-    border-radius: 999px;
-    padding: 2px 10px;
-    margin: 2px;
-  }
-  .result {
-    text-align: center;
-  }
-  .result .score {
-    font-size: 2.4rem;
-    font-weight: 700;
-    color: var(--accent);
-    margin: 12px 0;
-  }
-  .footer-actions {
-    margin-top: 24px;
-    display: flex;
-    justify-content: center;
-  }
-  .hidden { display: none; }
-</style>
 </head>
 <body>
-  <div class="card">
-    <div id="quiz-screen">
-      <h1>Fill in the Particle</h1>
-      <p class="sub">Complete each sentence with the right Singlish discourse particle.</p>
-      <div class="progress" id="progress"></div>
-      <div class="prompt" id="prompt"></div>
-      <form id="answer-form">
-        <input type="text" id="answer-input" autocomplete="off" placeholder="type the particle..." autofocus>
-        <button type="submit">Check</button>
-      </form>
-      <div class="feedback" id="feedback"></div>
-      <div class="word-bank">
-        Word bank: <span>lah</span><span>leh</span><span>lor</span><span>ah</span><span>eh</span><span>hor</span><span>mah</span><span>meh</span><span>sia</span>
-      </div>
-    </div>
 
-    <div id="result-screen" class="result hidden">
-      <h1>Done!</h1>
-      <p class="sub">Here's how you did.</p>
-      <div class="score" id="score"></div>
-      <div class="footer-actions">
-        <button class="ghost" id="restart-btn">Try Again</button>
-      </div>
-    </div>
-  </div>
+<h1>Fill in the Particle</h1>
+<p>Complete each sentence with the right Singlish discourse particle.</p>
+<p>Word bank: lah, leh, lor, ah, eh, hor, mah, meh, sia</p>
+<hr>
+
+<div id="quiz-screen">
+  <p id="progress"></p>
+  <p id="prompt"></p>
+  <form id="answer-form">
+    <input type="text" id="answer-input" autocomplete="off" size="20">
+    <input type="submit" value="Check">
+  </form>
+  <p id="feedback"></p>
+</div>
+
+<div id="result-screen" style="display:none">
+  <h2>Done!</h2>
+  <p>Your score: <span id="score"></span></p>
+  <form id="restart-form">
+    <input type="submit" value="Try Again">
+  </form>
+</div>
+
+<hr>
+<p><small>
+Particle examples adapted from: Leimgruber, J. R. E., Lim, J. J., Gonzales, W. D. W., &amp; Hiramoto, M. (2021).
+Ethnic and gender variation in the use of Colloquial Singapore English discourse particles.
+<i>English Language &amp; Linguistics</i>, 25(3), 601&ndash;620.
+<a href="https://doi.org/10.1017/S1360674320000453">https://doi.org/10.1017/S1360674320000453</a>
+</small></p>
 
 <script>
-  const QUESTIONS = [
+  var QUESTIONS = [
     { text: "Walao ______, why you liddat?", answer: "eh" },
     { text: "Don't so bad ______, he already said sorry.", answer: "lah" },
     { text: "Orh ______, you forgot to do your homework.", answer: "hor" },
@@ -183,28 +50,36 @@
     { text: "I also want to go ______, don't leave me behind.", answer: "leh" },
     { text: "Cannot help it, must pay ______.", answer: "lor" },
     { text: "I never eat yet ______, that's why so hungry.", answer: "mah" },
-    { text: "Wah, that horror movie damn scary ______!", answer: "sia" }
+    { text: "Wah, that horror movie damn scary ______!", answer: "sia" },
+    { text: "Wah you very free ______?", answer: "ah" },
+    { text: "I find the black emojis damn funny ______.", answer: "lor" },
+    { text: "Sit where? Still drizzling ______.", answer: "sia" },
+    { text: "Wtf they damn mean ______?", answer: "sia" },
+    { text: "I forgot to charge my phone. Bring cable ______?", answer: "leh" }
   ];
 
-  let order = [];
-  let current = 0;
-  let score = 0;
+  var order = [];
+  var current = 0;
+  var score = 0;
 
-  const quizScreen = document.getElementById('quiz-screen');
-  const resultScreen = document.getElementById('result-screen');
-  const promptEl = document.getElementById('prompt');
-  const progressEl = document.getElementById('progress');
-  const feedbackEl = document.getElementById('feedback');
-  const form = document.getElementById('answer-form');
-  const input = document.getElementById('answer-input');
-  const scoreEl = document.getElementById('score');
-  const restartBtn = document.getElementById('restart-btn');
+  var quizScreen = document.getElementById('quiz-screen');
+  var resultScreen = document.getElementById('result-screen');
+  var promptEl = document.getElementById('prompt');
+  var progressEl = document.getElementById('progress');
+  var feedbackEl = document.getElementById('feedback');
+  var form = document.getElementById('answer-form');
+  var input = document.getElementById('answer-input');
+  var scoreEl = document.getElementById('score');
+  var restartForm = document.getElementById('restart-form');
 
   function shuffledIndices(n) {
-    const arr = Array.from({ length: n }, (_, i) => i);
-    for (let i = arr.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [arr[i], arr[j]] = [arr[j], arr[i]];
+    var arr = [];
+    for (var i = 0; i < n; i++) arr.push(i);
+    for (var i = arr.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = arr[i];
+      arr[i] = arr[j];
+      arr[j] = tmp;
     }
     return arr;
   }
@@ -213,44 +88,40 @@
     order = shuffledIndices(QUESTIONS.length);
     current = 0;
     score = 0;
-    resultScreen.classList.add('hidden');
-    quizScreen.classList.remove('hidden');
+    resultScreen.style.display = 'none';
+    quizScreen.style.display = 'block';
     showQuestion();
   }
 
   function showQuestion() {
-    feedbackEl.textContent = '';
-    feedbackEl.className = 'feedback';
+    feedbackEl.innerHTML = '';
     input.value = '';
     input.disabled = false;
-    const q = QUESTIONS[order[current]];
-    progressEl.textContent = `Question ${current + 1} of ${QUESTIONS.length}`;
-    promptEl.innerHTML = q.text.replace('______', '<span class="blank">______</span>');
+    var q = QUESTIONS[order[current]];
+    progressEl.innerHTML = 'Question ' + (current + 1) + ' of ' + QUESTIONS.length;
+    promptEl.innerHTML = '<b>' + q.text + '</b>';
     input.focus();
   }
 
   function showResult() {
-    quizScreen.classList.add('hidden');
-    resultScreen.classList.remove('hidden');
-    scoreEl.textContent = `${score} / ${QUESTIONS.length}`;
+    quizScreen.style.display = 'none';
+    resultScreen.style.display = 'block';
+    scoreEl.innerHTML = score + ' / ' + QUESTIONS.length;
   }
 
-  form.addEventListener('submit', (e) => {
+  form.onsubmit = function(e) {
     e.preventDefault();
     if (input.disabled) return;
-    const q = QUESTIONS[order[current]];
-    const guess = input.value.trim().toLowerCase();
-    const correct = guess === q.answer.toLowerCase();
-    if (correct) {
+    var q = QUESTIONS[order[current]];
+    var guess = input.value.replace(/^\s+|\s+$/g, '').toLowerCase();
+    if (guess === q.answer.toLowerCase()) {
       score++;
-      feedbackEl.textContent = 'Correct!';
-      feedbackEl.classList.add('correct');
+      feedbackEl.innerHTML = 'Correct!';
     } else {
-      feedbackEl.textContent = `Nope, it's "${q.answer}".`;
-      feedbackEl.classList.add('wrong');
+      feedbackEl.innerHTML = 'Nope, it is "' + q.answer + '".';
     }
     input.disabled = true;
-    setTimeout(() => {
+    setTimeout(function() {
       current++;
       if (current < QUESTIONS.length) {
         showQuestion();
@@ -258,11 +129,15 @@
         showResult();
       }
     }, 1000);
-  });
+  };
 
-  restartBtn.addEventListener('click', startQuiz);
+  restartForm.onsubmit = function(e) {
+    e.preventDefault();
+    startQuiz();
+  };
 
   startQuiz();
 </script>
+
 </body>
 </html>
