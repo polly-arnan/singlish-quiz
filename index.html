@@ -83,11 +83,17 @@
     margin-bottom: 6px;
     text-align: right;
   }
-  .export-row {
-    margin-top: 24px;
-  }
-  .export-row button {
-    background: #888;
+  .export-link {
+    display: inline-block;
+    margin-top: 50px;
+    font-size: 0.85rem;
+    color: #888;
+    text-decoration: underline;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-family: inherit;
   }
   .prompt {
     font-size: 1.25rem;
@@ -108,7 +114,7 @@
     text-align: center;
     font-size: 0.78rem;
     color: #888;
-    margin-top: 50px;
+    margin-top: 10px;
     line-height: 1.5;
     box-sizing: border-box;
   }
@@ -150,12 +156,11 @@
     <button id="restart-btn">Try Again</button>
   </div>
 
-  <div class="export-row">
-    <button id="export-btn">Export answer sheet</button>
-  </div>
 
 </div>
 </div>
+
+<button class="export-link" id="export-btn">Export answer sheet</button>
 
 <p class="citation" id="citation">
   Particle examples adapted from: Leimgruber, J. R. E., Lim, J. J., Gonzales, W. D. W., &amp; Hiramoto, M. (2021).
@@ -166,22 +171,22 @@
 
 <script>
   var QUESTIONS = [
-    { text: "Walao ______, why you liddat?", answer: "eh" },
-    { text: "Don't so bad ______, he already said sorry.", answer: "lah" },
-    { text: "Orh ______, you forgot to do your homework.", answer: "hor" },
-    { text: "Wait ______, I go toilet first.", answer: "ah" },
-    { text: "Really ______? Did he really say that?", answer: "meh" },
-    { text: "He's a pro ______, don't play play.", answer: "hor" },
-    { text: "Huh, no more coffee? Then give me tea ______.", answer: "lah" },
-    { text: "I also want to go ______, don't leave me behind.", answer: "leh" },
-    { text: "Cannot help it, must pay ______.", answer: "lor" },
-    { text: "I never eat yet ______, that's why so hungry.", answer: "mah" },
-    { text: "Wah, that horror movie damn scary ______!", answer: "sia" },
-    { text: "Wah you very free ______?", answer: "ah" },
-    { text: "I find the black emojis damn funny ______.", answer: "lor" },
-    { text: "Sit where? Still drizzling ______.", answer: "sia" },
-    { text: "Wtf they damn mean ______?", answer: "sia" },
-    { text: "I forgot to charge my phone. Bring cable ______?", answer: "leh" }
+    { text: "Walao ______, why you liddat?", answer: "eh", citation: "Maven Potter, via r/singapore: \"Singlish test, 100% is the passing mark\" (https://www.reddit.com/r/singapore/comments/3ggkmw/singlish_test_100_is_the_passing_mark/)" },
+    { text: "Don't so bad ______, he already said sorry.", answer: "lah", citation: "Maven Potter, via r/singapore: \"Singlish test, 100% is the passing mark\" (https://www.reddit.com/r/singapore/comments/3ggkmw/singlish_test_100_is_the_passing_mark/)" },
+    { text: "Orh ______, you forgot to do your homework.", answer: "hor", citation: "Maven Potter, via r/singapore: \"Singlish test, 100% is the passing mark\" (https://www.reddit.com/r/singapore/comments/3ggkmw/singlish_test_100_is_the_passing_mark/)" },
+    { text: "Wait ______, I go toilet first.", answer: "ah", citation: "Maven Potter, via r/singapore: \"Singlish test, 100% is the passing mark\" (https://www.reddit.com/r/singapore/comments/3ggkmw/singlish_test_100_is_the_passing_mark/)" },
+    { text: "Really ______? Did he really say that?", answer: "meh", citation: "Maven Potter, via r/singapore: \"Singlish test, 100% is the passing mark\" (https://www.reddit.com/r/singapore/comments/3ggkmw/singlish_test_100_is_the_passing_mark/)" },
+    { text: "He's a pro ______, don't play play.", answer: "hor", citation: "Maven Potter, via r/singapore: \"Singlish test, 100% is the passing mark\" (https://www.reddit.com/r/singapore/comments/3ggkmw/singlish_test_100_is_the_passing_mark/)" },
+    { text: "Huh, no more coffee? Then give me tea ______.", answer: "lah", citation: "Maven Potter, via r/singapore: \"Singlish test, 100% is the passing mark\" (https://www.reddit.com/r/singapore/comments/3ggkmw/singlish_test_100_is_the_passing_mark/)" },
+    { text: "I also want to go ______, don't leave me behind.", answer: "leh", citation: "TBD" },
+    { text: "Cannot help it, must pay ______.", answer: "lor", citation: "TBD" },
+    { text: "I never eat yet ______, that's why so hungry.", answer: "mah", citation: "TBD" },
+    { text: "Wah, that horror movie damn scary ______!", answer: "sia", citation: "TBD" },
+    { text: "Wah you very free ______?", answer: "ah", citation: "Leimgruber, Lim, Gonzales, & Hiramoto (2021), example (2), English Language & Linguistics 25(3), p. 606. https://doi.org/10.1017/S1360674320000453" },
+    { text: "I find the black emojis damn funny ______.", answer: "lor", citation: "Leimgruber, Lim, Gonzales, & Hiramoto (2021), example (5), English Language & Linguistics 25(3), p. 606. https://doi.org/10.1017/S1360674320000453" },
+    { text: "Sit where? Still drizzling ______.", answer: "sia", citation: "Leimgruber, Lim, Gonzales, & Hiramoto (2021), example (6), English Language & Linguistics 25(3), p. 606. https://doi.org/10.1017/S1360674320000453" },
+    { text: "Wtf they damn mean ______?", answer: "sia", citation: "Leimgruber, Lim, Gonzales, & Hiramoto (2021), example (8), English Language & Linguistics 25(3), p. 613. https://doi.org/10.1017/S1360674320000453" },
+    { text: "I forgot to charge my phone. Bring cable ______?", answer: "leh", citation: "Gonzales, Hiramoto, Leimgruber, & Lim (2023). The Corpus of Singapore English Messages (CoSEM). World Englishes, 42(2), 371–388. https://doi.org/10.1111/weng.12534" }
   ];
 
   var TIMER_SECONDS = 60;
@@ -243,6 +248,7 @@
     quizScreen.classList.remove('hidden');
     headerBlock.classList.add('hidden');
     citation.classList.add('hidden');
+    exportBtn.classList.add('hidden');
 
     if (timedMode) {
       progressOuter.classList.remove('hidden');
@@ -317,6 +323,7 @@
     resultScreen.classList.remove('hidden');
     headerBlock.classList.remove('hidden');
     citation.classList.remove('hidden');
+    exportBtn.classList.remove('hidden');
     if (timedMode) {
       resultText.innerHTML = "Time's up! " + correctCount + ' correct, ' + incorrectCount + ' incorrect (' + (correctCount + incorrectCount) + ' answered).';
     } else {
@@ -334,9 +341,9 @@
   }
 
   exportBtn.onclick = function() {
-    var rows = [['Question', 'Answer']];
+    var rows = [['Question', 'Answer', 'Citation']];
     for (var i = 0; i < QUESTIONS.length; i++) {
-      rows.push([QUESTIONS[i].text, QUESTIONS[i].answer]);
+      rows.push([QUESTIONS[i].text, QUESTIONS[i].answer, QUESTIONS[i].citation]);
     }
     var csv = rows.map(function(row) {
       return row.map(csvField).join(',');
